@@ -158,7 +158,7 @@ namespace LMS.Controllers
     /// </returns>
     public IActionResult GetUser(string uid)
     {
-     //special case if fails1stdogPi
+     //special case if fails
       return Json(new { success = false } );
     }
 

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Jose\\Downloads\\LMS_handout\\LMS\\LMS.csproj": {}
+    "C:\\Users\\Jose\\Documents\\GitHub\\LMS\\LMS\\LMS.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Jose\\Downloads\\LMS_handout\\LMS\\LMS.csproj": {
+    "C:\\Users\\Jose\\Documents\\GitHub\\LMS\\LMS\\LMS.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Jose\\Downloads\\LMS_handout\\LMS\\LMS.csproj",
+        "projectUniqueName": "C:\\Users\\Jose\\Documents\\GitHub\\LMS\\LMS\\LMS.csproj",
         "projectName": "LMS",
-        "projectPath": "C:\\Users\\Jose\\Downloads\\LMS_handout\\LMS\\LMS.csproj",
+        "projectPath": "C:\\Users\\Jose\\Documents\\GitHub\\LMS\\LMS\\LMS.csproj",
         "packagesPath": "C:\\Users\\Jose\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Jose\\Downloads\\LMS_handout\\LMS\\obj\\",
+        "outputPath": "C:\\Users\\Jose\\Documents\\GitHub\\LMS\\LMS\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
