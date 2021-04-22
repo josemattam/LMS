@@ -77,8 +77,8 @@ C:\Users\Jose\Downloads\LMS_handout\LMS\obj\Debug\netcoreapp2.2\LMS.Views.pdb
 C:\Users\Jose\Downloads\LMS_handout\LMS\obj\Debug\netcoreapp2.2\LMS.dll
 C:\Users\Jose\Downloads\LMS_handout\LMS\obj\Debug\netcoreapp2.2\LMS.pdb
 C:\Users\Jose\Downloads\LMS_handout\LMS\obj\Debug\netcoreapp2.2\LMS.csproj.CopyComplete
-C:\Users\Jose\Documents\GitHub\LMS\LMS\bin\Debug\netcoreapp2.2\Properties\launchSettings.json
 C:\Users\Jose\Documents\GitHub\LMS\LMS\bin\Debug\netcoreapp2.2\appsettings.json
+C:\Users\Jose\Documents\GitHub\LMS\LMS\bin\Debug\netcoreapp2.2\Properties\launchSettings.json
 C:\Users\Jose\Documents\GitHub\LMS\LMS\bin\Debug\netcoreapp2.2\https.pfx
 C:\Users\Jose\Documents\GitHub\LMS\LMS\bin\Debug\netcoreapp2.2\LMS.deps.json
 C:\Users\Jose\Documents\GitHub\LMS\LMS\bin\Debug\netcoreapp2.2\LMS.runtimeconfig.json
