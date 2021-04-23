@@ -256,7 +256,7 @@ namespace LMS.Controllers
                 return Json(new { success = false } );
     }
 
-    private RemoveNullVal ()
+    //private RemoveNullVal ()
 
 
     /*******End code to modify********/
