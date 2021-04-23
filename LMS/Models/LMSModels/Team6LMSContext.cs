@@ -126,8 +126,8 @@ namespace LMS.Models.LMSModels
                 entity.HasIndex(e => e.PId)
                     .HasName("pID");
 
-                entity.HasIndex(e => new { e.Year, e.CId })
-                    .HasName("Semester")
+                entity.HasIndex(e => new { e.Season, e.Year, e.CId })
+                    .HasName("UQ_Classes_Semester")
                     .IsUnique();
 
                 entity.Property(e => e.ClsId)

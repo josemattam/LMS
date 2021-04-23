@@ -165,6 +165,7 @@ namespace LMS.Controllers
     ///	false if an assignment category with the same name already exists in the same class.</returns>
     public IActionResult CreateAssignmentCategory(string subject, int num, string season, int year, string category, int catweight)
     {    
+            //reza
 
       return Json(new { success = false });
     }
@@ -185,7 +186,7 @@ namespace LMS.Controllers
 	/// false if an assignment with the same name already exists in the same assignment category.</returns>
     public IActionResult CreateAssignment(string subject, int num, string season, int year, string category, string asgname, int asgpoints, DateTime asgdue, string asgcontents)
     {
-
+            //reza
       return Json(new { success = false });
     }
 

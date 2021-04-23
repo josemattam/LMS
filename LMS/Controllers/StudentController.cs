@@ -150,14 +150,42 @@ namespace LMS.Controllers
     /// <returns>A JSON object containing a single field called "gpa" with the number value</returns>
     public IActionResult GetGPA(string uid)
     {     
-            //we get an iqueryable array
-            //foreach loop
-            //switch case letter grades
-            //calculate score avg
-      return Json(new { gpa = 0.0 });
+      return Json(null);
     }
 
-    /*******End code to modify********/
+        /*
+            using (Team6LMSContext db = new Team6LMSContext())
+            {
+                var query = from e in db.Enrolled
+                            where e.UId == uid
+                            select e.Grade;
 
-  }
+                double total = 0.0;
+                foreach (string grade in query)
+                {
+                    switch (grade)
+                    {
+                        case "A":
+                            total += 4;
+                            break;
+                        case "A-":
+                            total += 3.7;
+                            break;
+                        case "B+":
+                            total += 3.3;
+                            break;
+
+                    }
+                }
+            }
+            //we get an iqueryable array
+            //foreach loop
+            //switch case letter grade values
+            //calculate score avg
+      return Json(new { gpa = 0.0 });
+      */
+
+        /*******End code to modify********/
+
+    }
 }
