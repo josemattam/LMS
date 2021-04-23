@@ -457,7 +457,8 @@ namespace LMS.Controllers
                         S.Score = (uint)score;
                     }
                 }
-                return Json(new { success = true });
+                    db.SaveChanges();
+                    return Json(new { success = true });
                 }
                 catch { return Json(new { success = false }); }
 
