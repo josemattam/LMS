@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using LMS.Models.LMSModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,15 +15,14 @@ namespace LMS.Controllers
 
     // TODO: Uncomment and change 'X' after you have scaffoled
 
-    /*
-    protected TeamXLMSContext db;
+    
+    protected Team6LMSContext db;
 
     public CommonController()
     {
-      db = new TeamXLMSContext();
+      db = new Team6LMSContext();
     }
-    */
-
+    
     /*
      * WARNING: This is the quick and easy way to make the controller
      *          use a different LibraryContext - good enough for our purposes.
@@ -31,8 +31,8 @@ namespace LMS.Controllers
     */
 
     // TODO: Uncomment and change 'X' after you have scaffoled
-    /*
-    public void UseLMSContext(TeamXLMSContext ctx)
+    
+    public void UseLMSContext(Team6LMSContext ctx)
     {
       db = ctx;
     }
@@ -45,7 +45,7 @@ namespace LMS.Controllers
       }
       base.Dispose(disposing);
     }
-    */
+    
 
 
 
@@ -57,8 +57,19 @@ namespace LMS.Controllers
     /// <returns>The JSON array</returns>
     public IActionResult GetDepartments()
     {
+            using (Team6LMSContext db = new Team6LMSContext())
+            {
+                var query = from d in db.Departments
+                            select new
+                            {
+                                name = d.Name,
+                                subject = d.Subject
+                            };
+                return Json(query.ToArray());
+            }
+
       // TODO: Do not return this hard-coded array.
-      return Json(new[] { new { name = "None", subject = "NONE" } });
+      //return Json(new[] { new { name = "None", subject = "NONE" } });
     }
 
 
@@ -75,9 +86,26 @@ namespace LMS.Controllers
     /// </summary>
     /// <returns>The JSON array</returns>
     public IActionResult GetCatalog()
-    {     
+    {
+            using (Team6LMSContext db = new Team6LMSContext())
+            {
+                var query = from d in db.Departments
+                            select new
+                            {
+                                subject = d.Subject,
+                                dname = d.Name,
+                                courses = from c in db.Courses
+                                          where c.Subject == d.Subject
+                                          select new
+                                          {
+                                              number = c.Num,
+                                              cname = c.Name
+                                          }
+                            };
 
-      return Json(null);
+                return Json(query.ToArray());
+            }
+
     }
 
     /// <summary>
@@ -96,9 +124,26 @@ namespace LMS.Controllers
     /// <returns>The JSON array</returns>
     public IActionResult GetClassOfferings(string subject, int number)
     {
-      
-      return Json(null);
-    }
+            using (Team6LMSContext db = new Team6LMSContext())
+            {
+                var query = from cl in db.Classes
+                            join u in db.Users on cl.PId equals u.UId
+                            join co in db.Courses on cl.CId equals co.CId
+                            where co.Subject == subject && co.Num == number
+                            select new
+                            {
+                                season = cl.Season,
+                                year = cl.Year,
+                                location = cl.Loc,
+                                start = cl.Start,
+                                end = cl.End,
+                                fname = u.FName,
+                                lname = u.LName
+                            };
+
+                return Json(query.ToArray());
+            }
+        }
 
     /// <summary>
     /// This method does NOT return JSON. It returns plain text (containing html).
