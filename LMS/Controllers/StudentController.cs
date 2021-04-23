@@ -150,8 +150,11 @@ namespace LMS.Controllers
     /// <returns>A JSON object containing a single field called "gpa" with the number value</returns>
     public IActionResult GetGPA(string uid)
     {     
-
-      return Json(null);
+            //we get an iqueryable array
+            //foreach loop
+            //switch case letter grades
+            //calculate score avg
+      return Json(new { gpa = 0.0 });
     }
 
     /*******End code to modify********/
