@@ -490,29 +490,56 @@ namespace LMS.Controllers
             {
                 var query2 = from a in db.Users select a.UId;
                 bool cond = true;
-                string s = string.Empty;
+                string uid = string.Empty;
                 while (true)
                 {
                     var random = new Random();
-                    s = "u";
+                    uid = "u";
                     for (int i = 0; i < 7; i++)
-                        s = String.Concat(s, random.Next(10).ToString());
+                        uid = String.Concat(uid, random.Next(10).ToString());
 
                     foreach (string U in query2)
                     {
-                        if (U.Equals(s))
+                        if (U.Equals(uid))
                         {
                             cond = false;
                         }
                     }
                     if (cond)
                     {
+                        Users newUser = new Users();
+                        newUser.UId = uid;
+                        newUser.FName = fName;
+                        newUser.LName = lName;
+                        newUser.Dob = DOB;
+                        db.Users.Add(newUser);
+
+                        if (role == "Professor")
+                        {
+                            Professors prof = new Professors();
+                            prof.UId = uid;
+                            prof.Subject = SubjectAbbrev;
+                            db.Professors.Add(prof);
+                        }
+                        else if (role == "Students")
+                        {
+                            Students stu = new Students();
+                            stu.UId = uid;
+                            stu.Subject = SubjectAbbrev;
+                            db.Students.Add(stu);
+                        }
+                        else
+                        {
+                            Administrators adm = new Administrators();
+                            adm.UId = uid;
+                            db.Administrators.Add(adm);
+                        }
+                        db.SaveChanges();
                         break;
                     }
-
                 }
 
-                return s;
+                return uid;
             }
         }
 

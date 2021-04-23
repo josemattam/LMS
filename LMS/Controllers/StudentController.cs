@@ -71,7 +71,7 @@ namespace LMS.Controllers
             using (Team6LMSContext db = new Team6LMSContext())
             {
                 var query = from t in db.Students
-                            where t.UId.Equals("u1111111")
+                            where t.UId.Equals(uid)
                             join i in db.Enrolled on t.UId equals i.UId into inv
                             from j1 in inv.DefaultIfEmpty()
                             join c in db.Classes on j1.ClsId equals c.ClsId into clsses

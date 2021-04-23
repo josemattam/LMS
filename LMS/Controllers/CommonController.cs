@@ -262,7 +262,7 @@ namespace LMS.Controllers
                     return Json(new { success = false });
 
                 //return ReplaceNull(Json(query.ToArray()[0]));
-                return ReplaceNull(Json(query.ToArray()));
+                return ReplaceNull(Json(query.ToArray()[0]));
             }
     }
 
