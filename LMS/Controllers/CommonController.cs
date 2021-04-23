@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using LMS.Models.LMSModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace LMS.Controllers
 {
@@ -170,7 +172,7 @@ namespace LMS.Controllers
                                   ac.Name == category && an.Name == asgname
                             select an.Contents;
                 //TODO: change tostr
-                return Content(query.ToString());
+                return Content(query.Single());
             }
         }
 
@@ -205,7 +207,10 @@ namespace LMS.Controllers
                             select su.Contents;
                 //TODO: change tostr
                 // special case: replace null with empty string
-                return Content((query != null)? query.ToString() : "");
+                if (query == null)
+                    return Content("");
+
+                return Content(query.Single());
             }
     }
 
@@ -247,16 +252,38 @@ namespace LMS.Controllers
                                 department = (aspu == null) ? "nullVal"  :  ((spu != null) ? 
                                                                             (from s in db.Students
                                                                              where s.UId == uid
-                                                                             select s.Subject).ToString() :
+                                                                             select s.Subject).Single() :
                                                                                                 pu.Subject)
                             };
 
+                //special case if query fails
+                if (query == null)
+                    return Json(new { success = false });
+
+                return ReplaceNull(Json(query.ToArray()[0]));
+
             }
-                //special case if fails
-                return Json(new { success = false } );
     }
 
-    //private RemoveNullVal ()
+    /// <summary>
+    /// Helper function to GetUser. If the user is an administrator, it removes the 
+    /// json field of department from the returned JsonResult.
+    /// </summary>
+    /// <param name="jr"> the JsonResult that needs checking </param>
+    /// <returns> In format JsonResult </returns>
+    private IActionResult ReplaceNull(JsonResult jr)
+    {
+            //converts json to string
+            string jstr = JsonConvert.SerializeObject(jr.Value);
+            JObject jo = JObject.Parse(jstr);
+
+            if (jstr.Contains("nullVal"))
+            {
+                jo.Property("department").Remove();
+                return Json(jo);
+            }
+            return Json(jo);
+    }
 
 
     /*******End code to modify********/
