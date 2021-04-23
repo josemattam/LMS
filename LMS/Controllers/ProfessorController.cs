@@ -435,10 +435,34 @@ namespace LMS.Controllers
     /// <param name="score">The new score for the submission</param>
     /// <returns>A JSON object containing success = true/false</returns>
     public IActionResult GradeSubmission(string subject, int num, string season, int year, string category, string asgname, string uid, int score)
-    {    
+    {
+            using (Team6LMSContext db = new Team6LMSContext())
+            {
+                try { 
+                var query2 = from co in db.Courses
+                             join cl in db.Classes on co.CId equals cl.CId
+                             join ac in db.AssignmentCategories on cl.ClsId equals ac.ClsId
+                             join an in db.Assignments on ac.AcId equals an.AcId
+                             join su in db.Submissions on an.AId equals su.AId
+                             where co.Subject == subject && co.Num == num &&
+                                  cl.Season == season && cl.Year == year &&
+                                  ac.Name == category && an.Name == asgname &&
+                                  su.UId.Equals(uid)
+                             select su;
 
-      return Json(new { success = true });
-    }
+                foreach (Submissions S in query2)
+                {
+                    if (S.UId.Equals(uid))
+                    {
+                        S.Score = (uint)score;
+                    }
+                }
+                return Json(new { success = true });
+                }
+                catch { return Json(new { success = false }); }
+
+            }
+        }
 
 
     /// <summary>
