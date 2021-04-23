@@ -514,14 +514,14 @@ namespace LMS.Controllers
                         newUser.Dob = DOB;
                         db.Users.Add(newUser);
 
-                        if (role == "Professor")
+                        if (role.Equals("Professor"))
                         {
                             Professors prof = new Professors();
                             prof.UId = uid;
                             prof.Subject = SubjectAbbrev;
                             db.Professors.Add(prof);
                         }
-                        else if (role == "Student")
+                        else if (role.Equals("Student"))
                         {
                             Students stu = new Students();
                             stu.UId = uid;

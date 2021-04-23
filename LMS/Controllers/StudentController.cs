@@ -173,15 +173,30 @@ namespace LMS.Controllers
             {
                 var query2 = from a in db.Assignments where a.Name.Equals(asgname) select a.AId;
                 int[] AIDtmp = query2.ToArray();
-                // resubmitting an assignment: if the aid is the same, only change the contents
-                Submissions newSub = new Submissions();
-                newSub.Contents = contents;
-                newSub.Score = 0;
-                newSub.UId = uid;
-                newSub.AId = AIDtmp[0];
-                newSub.Time = DateTime.Now;
 
-                db.Submissions.Add(newSub);
+                var query1 = from b in db.Submissions where b.AId.Equals(AIDtmp[0]) 
+                             && b.UId.Equals(uid)  select b;
+
+                if (query1.Any()) //resubmission
+                {
+                    foreach (Submissions S in query1)
+                    {
+                        S.Contents = contents;
+                        S.Time = DateTime.Now;
+                    }
+                }
+                else //new submission
+                {
+                    Submissions newSub = new Submissions();
+                    newSub.Contents = contents;
+                    newSub.Score = 0;
+                    newSub.UId = uid;
+                    newSub.AId = AIDtmp[0];
+                    newSub.Time = DateTime.Now;
+                    db.Submissions.Add(newSub);
+                }
+                // Fixed - resubmitting an assignment: if the aid is the same, only change the contents
+                
                 db.SaveChanges();
                 return Json(new { success = true });
             }
