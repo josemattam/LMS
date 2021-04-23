@@ -172,8 +172,12 @@ namespace LMS.Controllers
                                   cl.Year == year && cl.Season == season &&
                                   ac.Name == category && an.Name == asgname
                             select an.Contents;
-                //TODO: change tostr
-                return Content(query.Single());
+
+                string jstr = JsonConvert.SerializeObject(Json(query.ToArray()));
+                JObject jo = JObject.Parse(jstr);
+
+                string cont = jo["Value"].ToString();
+                return Content(cont);
             }
         }
 
@@ -211,7 +215,11 @@ namespace LMS.Controllers
                 if (query == null)
                     return Content("");
 
-                return Content(query.Single());
+                string jstr = JsonConvert.SerializeObject(Json(query.ToArray()));
+                JObject jo = JObject.Parse(jstr);
+
+                string cont = jo["Value"].ToString();
+                return Content(cont);
             }
     }
 
@@ -253,7 +261,7 @@ namespace LMS.Controllers
                                 department = (aspu == null) ? "nullVal"  :  ((spu != null) ? 
                                                                             (from s in db.Students
                                                                              where s.UId == uid
-                                                                             select s.Subject).Single() :
+                                                                             select s.Subject).ToString() :
                                                                                                 pu.Subject)
                             };
 

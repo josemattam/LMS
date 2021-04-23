@@ -114,7 +114,7 @@ namespace LMS.Controllers
             using (Team6LMSContext db = new Team6LMSContext())
             {
                 var query = from t in db.Students
-                            where t.UId.Equals("u1111111")
+                            where t.UId.Equals(uid)
                             join i in db.Enrolled on t.UId equals i.UId into inv2
                             from j1 in inv2.DefaultIfEmpty()
 
@@ -173,6 +173,7 @@ namespace LMS.Controllers
             {
                 var query2 = from a in db.Assignments where a.Name.Equals(asgname) select a.AId;
                 int[] AIDtmp = query2.ToArray();
+                // resubmitting an assignment: if the aid is the same, only change the contents
                 Submissions newSub = new Submissions();
                 newSub.Contents = contents;
                 newSub.Score = 0;
@@ -253,7 +254,7 @@ namespace LMS.Controllers
             using (Team6LMSContext db = new Team6LMSContext())
             {
                 var query2 = from a in db.Enrolled
-                             where a.UId.Equals("u1111111")
+                             where a.UId.Equals(uid)
                              select a;
                 int k = 0;
                 double GPAtmp = 0;
