@@ -31,7 +31,6 @@ namespace LMS.Models.LMSModels
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
                 optionsBuilder.UseMySql("Server=atr.eng.utah.edu;User Id=u1200824;Password=1stdogPixie;Database=Team6LMS");
             }
         }
