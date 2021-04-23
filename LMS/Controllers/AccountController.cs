@@ -521,7 +521,7 @@ namespace LMS.Controllers
                             prof.Subject = SubjectAbbrev;
                             db.Professors.Add(prof);
                         }
-                        else if (role == "Students")
+                        else if (role == "Student")
                         {
                             Students stu = new Students();
                             stu.UId = uid;

@@ -227,6 +227,7 @@ namespace LMS.Controllers
                     newEnrl.UId = uid;
                     newEnrl.ClsId = clsIDtmp[0];
                     newEnrl.Grade = "";
+                    // need to add a cls, u?
 
                     db.Enrolled.Add(newEnrl);
                     db.SaveChanges();
