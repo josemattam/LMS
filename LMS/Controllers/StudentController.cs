@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using LMS.Models.LMSModels;
+using Newtonsoft.Json;
 
 namespace LMS.Controllers
 {
@@ -70,26 +71,26 @@ namespace LMS.Controllers
         {
             using (Team6LMSContext db = new Team6LMSContext())
             {
-                var query = from t in db.Students
-                            where t.UId.Equals(uid)
-                            join i in db.Enrolled on t.UId equals i.UId into inv
-                            from j1 in inv.DefaultIfEmpty()
-                            join c in db.Classes on j1.ClsId equals c.ClsId into clsses
-                            from j2 in clsses.DefaultIfEmpty()
-                            join p in db.Courses on j2.CId equals p.CId into pats
-                            from j3 in pats.DefaultIfEmpty()
-
+                var query = from co in db.Courses
+                            join cl in db.Classes on co.CId equals cl.CId
+                            join e in db.Enrolled on cl.ClsId equals e.ClsId
+                            join s in db.Students on e.UId equals s.UId
+                            where s.UId == uid
                             select new
                             {
-                                subject = j3.Subject,
-                                number = j3.Num,
-                                name = j3.Name,
-                                season = j2.Season,
-                                year = j2.Year,
-                                grade = j1.Grade == null ? "--" : j1.Grade,
+                                subject = co.Subject,
+                                number = co.Num,
+                                name = co.Name,
+                                season = cl.Season,
+                                year = cl.Year,
+                                grade = e.Grade == null ? "--" : e.Grade
                                 //Serial = j1 == null ? null : (uint?)j1.Serial,
                                 //Name = j3 == null ? "" : j3.Name
                             };
+                JsonResult jr = Json(query.ToArray());
+
+                string str = JsonConvert.SerializeObject(jr.Value);
+
                 return Json(query.ToArray());
             }
         }
