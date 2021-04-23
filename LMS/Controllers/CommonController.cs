@@ -129,7 +129,8 @@ namespace LMS.Controllers
             using (Team6LMSContext db = new Team6LMSContext())
             {
                 var query = from cl in db.Classes
-                            join u in db.Users on cl.PId equals u.UId
+                            join pu in db.Professors on cl.PId equals pu.UId
+                            join u in db.Users on pu.UId equals u.UId
                             join co in db.Courses on cl.CId equals co.CId
                             where co.Subject == subject && co.Num == number
                             select new
@@ -257,11 +258,11 @@ namespace LMS.Controllers
                             };
 
                 //special case if query fails
-                if (query == null)
+                if (query == null || Json(query) == null)
                     return Json(new { success = false });
 
-                return ReplaceNull(Json(query.ToArray()[0]));
-
+                //return ReplaceNull(Json(query.ToArray()[0]));
+                return ReplaceNull(Json(query.ToArray()));
             }
     }
 

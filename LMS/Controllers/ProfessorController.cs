@@ -106,9 +106,27 @@ namespace LMS.Controllers
     /// <returns>The JSON array</returns>
     public IActionResult GetStudentsInClass(string subject, int num, string season, int year)
     {
-      
-      return Json(null);
-    }
+            using (Team6LMSContext db = new Team6LMSContext())
+            {
+                var query = from u in db.Users
+                            join stu in db.Students on u.UId equals stu.UId
+                            join e in db.Enrolled on stu.UId equals e.UId
+                            join cl in db.Classes on e.ClsId equals cl.ClsId
+                            join co in db.Courses on cl.CId equals co.CId
+                            where co.Subject == subject && co.Num == num &&
+                                  cl.Season == season && cl.Year == year
+                            select new
+                            {
+                                fname = u.FName,
+                                lname = u.LName,
+                                uid = u.UId,
+                                dob = u.Dob,
+                                grade = e.Grade
+                            };
+                return Json(query.ToArray());
+
+            }
+        }
 
 
 
@@ -130,9 +148,30 @@ namespace LMS.Controllers
     /// <returns>The JSON array</returns>
     public IActionResult GetAssignmentsInCategory(string subject, int num, string season, int year, string category)
     {
+            using (Team6LMSContext db = new Team6LMSContext())
+            {
+                var query = from co in db.Courses
+                            join cl in db.Classes on co.CId equals cl.CId
+                            join ac in db.AssignmentCategories on cl.ClsId equals ac.ClsId
+                            join an in db.Assignments on ac.AcId equals an.AcId
+                            where co.Subject == subject && co.Num == num &&
+                                  cl.Season == season && cl.Year == year &&
+                                  ac.Name == category
+                            select new
+                            {
+                                aname = an.Name,
+                                cname = ac.Name,
+                                due = an.Due,
+                                submissions = (from su in db.Submissions
+                                               join a in db.Assignments on su.AId equals a.AId
+                                               where a.Name == an.Name
+                                               select su.UId).Count()
 
-      return Json(null);
-    }
+                            };
+                return Json(query.ToArray());
+
+            }
+        }
 
 
     /// <summary>
@@ -148,10 +187,22 @@ namespace LMS.Controllers
     /// <param name="category">The name of the assignment category in the class</param>
     /// <returns>The JSON array</returns>
     public IActionResult GetAssignmentCategories(string subject, int num, string season, int year)
-    {      
-
-      return Json(null);
-    }
+    {
+            using (Team6LMSContext db = new Team6LMSContext())
+            {
+                var query = from co in db.Courses
+                            join cl in db.Classes on co.CId equals cl.CId
+                            join ac in db.AssignmentCategories on cl.ClsId equals ac.ClsId
+                            where co.Subject == subject && co.Num == num &&
+                                  cl.Season == season && cl.Year == year
+                            select new
+                            {
+                                name = ac.Name,
+                                weight = ac.Weight
+                            };
+                return Json(query.ToArray());
+            }
+        }
 
     /// <summary>
     /// Creates a new assignment category for the specified class.
@@ -166,7 +217,6 @@ namespace LMS.Controllers
     ///	false if an assignment category with the same name already exists in the same class.</returns>
     public IActionResult CreateAssignmentCategory(string subject, int num, string season, int year, string category, int catweight)
     {
-            //reza
             using (Team6LMSContext db = new Team6LMSContext())
             {
 
@@ -346,9 +396,30 @@ namespace LMS.Controllers
     /// <returns>The JSON array</returns>
     public IActionResult GetSubmissionsToAssignment(string subject, int num, string season, int year, string category, string asgname)
     {
-     
-      return Json(null);
-    }
+            using (Team6LMSContext db = new Team6LMSContext())
+            {
+                var query = from co in db.Courses
+                            join cl in db.Classes on co.CId equals cl.CId
+                            join ac in db.AssignmentCategories on cl.ClsId equals ac.ClsId
+                            join an in db.Assignments on ac.AcId equals an.AcId
+                            join su in db.Submissions on an.AId equals su.AId
+                            join stu in db.Students on su.UId equals stu.UId
+                            join u in db.Users on stu.UId equals u.UId
+                            where co.Subject == subject && co.Num == num &&
+                                  cl.Season == season && cl.Year == year &&
+                                  ac.Name == category && an.Name == asgname
+                            select new
+                            {
+                                fname = u.FName,
+                                lname = u.LName,
+                                uid = u.UId,
+                                time = su.Time,
+                                score = su.Score
+                            };
+
+                return Json(query.ToArray());
+            }
+        }
 
 
     /// <summary>
@@ -382,10 +453,24 @@ namespace LMS.Controllers
     /// <param name="uid">The professor's uid</param>
     /// <returns>The JSON array</returns>
     public IActionResult GetMyClasses(string uid)
-    {     
+    {
+            using (Team6LMSContext db = new Team6LMSContext())
+            {
+                var query = from co in db.Courses
+                            join cl in db.Classes on co.CId equals cl.CId
+                            where cl.PId == uid
+                            select new
+                            {
+                                subject = co.Subject,
+                                number = co.Num,
+                                name = co.Name,
+                                season = cl.Season,
+                                year = cl.Year
+                            };
 
-      return Json(null);
-    }
+                return Json(query.ToArray());
+            }
+        }
 
 
     /*******End code to modify********/
