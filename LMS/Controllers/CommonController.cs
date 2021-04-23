@@ -159,9 +159,20 @@ namespace LMS.Controllers
     /// <returns>The assignment contents</returns>
     public IActionResult GetAssignmentContents(string subject, int num, string season, int year, string category, string asgname)
     {
-
-      return Content("");
-    }
+            using (Team6LMSContext db = new Team6LMSContext())
+            {
+                var query = from co in db.Courses
+                            join cl in db.Classes on co.CId equals cl.CId
+                            join ac in db.AssignmentCategories on cl.ClsId equals ac.ClsId
+                            join an in db.Assignments on ac.AcId equals an.AcId
+                            where co.Subject == subject && co.Num == num &&
+                                  cl.Year == year && cl.Season == season &&
+                                  ac.Name == category && an.Name == asgname
+                            select an.Contents;
+                //TODO: change tostr
+                return Content(query.ToString());
+            }
+        }
 
 
     /// <summary>
@@ -180,8 +191,22 @@ namespace LMS.Controllers
     /// <returns>The submission text</returns>
     public IActionResult GetSubmissionText(string subject, int num, string season, int year, string category, string asgname, string uid)
     {
-      // special case: replace null with empty string
-      return Content("");
+            using (Team6LMSContext db = new Team6LMSContext())
+            {
+                var query = from co in db.Courses
+                            join cl in db.Classes on co.CId equals cl.CId
+                            join ac in db.AssignmentCategories on cl.ClsId equals ac.ClsId
+                            join an in db.Assignments on ac.AcId equals an.AcId
+                            join su in db.Submissions on an.AId equals su.AId
+                            where co.Subject == subject && co.Num == num &&
+                                  cl.Year == year && cl.Season == season &&
+                                  ac.Name == category && an.Name == asgname &&
+                                  su.UId == uid
+                            select su.Contents;
+                //TODO: change tostr
+                // special case: replace null with empty string
+                return Content((query != null)? query.ToString() : "");
+            }
     }
 
 
@@ -203,9 +228,35 @@ namespace LMS.Controllers
     /// </returns>
     public IActionResult GetUser(string uid)
     {
-     //special case if fails
-      return Json(new { success = false } );
+            using (Team6LMSContext db = new Team6LMSContext())
+            {
+                var query = from u in db.Users
+                            where u.UId == uid
+                            join p in db.Professors on u.UId equals p.UId into pujoin
+                            from pu in pujoin.DefaultIfEmpty()
+                            join s in db.Students on u.UId equals s.UId into spujoin
+                            from spu in spujoin.DefaultIfEmpty()
+                            join a in db.Administrators on u.UId equals a.UId into aspujoin
+                            from aspu in aspujoin.DefaultIfEmpty()
+                            select new
+                            {
+                                fname = u.FName,
+                                lname = u.LName,
+                                uid = u.UId,
+                                // str to be replaced if admin, corresponding subject if student or professor
+                                department = (aspu == null) ? "nullVal"  :  ((spu != null) ? 
+                                                                            (from s in db.Students
+                                                                             where s.UId == uid
+                                                                             select s.Subject).ToString() :
+                                                                                                pu.Subject)
+                            };
+
+            }
+                //special case if fails
+                return Json(new { success = false } );
     }
+
+    private RemoveNullVal ()
 
 
     /*******End code to modify********/
