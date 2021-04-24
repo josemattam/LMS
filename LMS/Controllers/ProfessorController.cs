@@ -150,26 +150,47 @@ namespace LMS.Controllers
     {
             using (Team6LMSContext db = new Team6LMSContext())
             {
-                var query = from co in db.Courses
-                            join cl in db.Classes on co.CId equals cl.CId
-                            join ac in db.AssignmentCategories on cl.ClsId equals ac.ClsId
-                            join an in db.Assignments on ac.AcId equals an.AcId
-                            where co.Subject == subject && co.Num == num &&
-                                  cl.Season == season && cl.Year == year &&
-                                  ac.Name == category
-                            select new
-                            {
-                                aname = an.Name,
-                                cname = ac.Name,
-                                due = an.Due,
-                                submissions = (from su in db.Submissions
-                                               join a in db.Assignments on su.AId equals a.AId
-                                               where a.Name == an.Name
-                                               select su.UId).Count()
-
-                            };
-                return Json(query.ToArray());
-
+                if (category == null)
+                {
+                    var query = from co in db.Courses
+                                join cl in db.Classes on co.CId equals cl.CId
+                                join ac in db.AssignmentCategories on cl.ClsId equals ac.ClsId
+                                join an in db.Assignments on ac.AcId equals an.AcId
+                                where co.Subject == subject && co.Num == num &&
+                                      cl.Season == season && cl.Year == year
+                                select new
+                                {
+                                    aname = an.Name,
+                                    cname = ac.Name,
+                                    due = an.Due,
+                                    submissions = (from su in db.Submissions
+                                                   join a in db.Assignments on su.AId equals a.AId
+                                                   where a.Name == an.Name
+                                                   select su.UId).Count()
+                                };
+                    return Json(query.ToArray());
+                }
+                else
+                {
+                    var query = from co in db.Courses
+                                join cl in db.Classes on co.CId equals cl.CId
+                                join ac in db.AssignmentCategories on cl.ClsId equals ac.ClsId
+                                join an in db.Assignments on ac.AcId equals an.AcId
+                                where co.Subject == subject && co.Num == num &&
+                                      cl.Season == season && cl.Year == year &&
+                                      ac.Name == category
+                                select new
+                                {
+                                    aname = an.Name,
+                                    cname = ac.Name,
+                                    due = an.Due,
+                                    submissions = (from su in db.Submissions
+                                                   join a in db.Assignments on su.AId equals a.AId
+                                                   where a.Name == an.Name
+                                                   select su.UId).Count()
+                                };
+                    return Json(query.ToArray());
+                }
             }
         }
 
