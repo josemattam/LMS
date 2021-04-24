@@ -219,64 +219,72 @@ namespace LMS.Controllers
     {
             using (Team6LMSContext db = new Team6LMSContext())
             {
+                try
+                {
+                    var query0 = from b in db.Courses
+                                 where b.Subject.Equals(subject) && b.Num.Equals(num)
+                                 join i in db.Classes on b.CId equals i.CId into inv
+                                 from j1 in inv.DefaultIfEmpty()
+                                 where j1.Year == year && j1.Season.Equals(season)
+                                 join i2 in db.AssignmentCategories on j1.ClsId equals i2.ClsId into inv2
+                                 from j2 in inv2.DefaultIfEmpty()
+                                 where j2.Name.Equals(category)
+                                 select j2;
 
-                var query0 = from b in db.Courses where b.Subject.Equals(subject) && b.Num.Equals(num) 
-                              join i in db.Classes on b.CId equals i.CId into inv
-                              from j1 in inv.DefaultIfEmpty()
-                             where j1.Year == year && j1.Season.Equals(season)
-                             join i2 in db.AssignmentCategories on j1.ClsId equals i2.ClsId into inv2
-                              from j2 in inv2.DefaultIfEmpty()
-                             where j2.Name.Equals(category)
-                             select j2;
 
- 
-                var query2 = from b in db.Courses
-                where b.Subject.Equals(subject) && b.Num.Equals(num)
-                                   join i in db.Classes on b.CId equals i.CId into inv
-                                   from j1 in inv.DefaultIfEmpty()
-                                   where j1.Year == year && j1.Season.Equals(season) select j1.ClsId;
-                int[] clsIDtmp = query2.ToArray();
+                    var query2 = from b in db.Courses
+                                 where b.Subject.Equals(subject) && b.Num.Equals(num)
+                                 join i in db.Classes on b.CId equals i.CId into inv
+                                 from j1 in inv.DefaultIfEmpty()
+                                 where j1.Year == year && j1.Season.Equals(season)
+                                 select j1.ClsId;
+                    int[] clsIDtmp = query2.ToArray();
 
-                if (query0.Any())
+                    if (query0.Any())
+                    {
+                        return Json(new { success = false });
+                    }
+                    else
+                    {
+                        var query = from a in db.AssignmentCategories
+                                    select a.AcId;
+
+                        bool cond = true;
+                        string s = string.Empty;
+                        while (true)
+                        {
+                            var random = new Random();
+                            s = "";
+                            for (int i = 0; i < 3; i++)
+                                s = String.Concat(s, random.Next(10).ToString());
+
+                            foreach (int U in query)
+                            {
+                                if (U.ToString().Equals(s))
+                                {
+                                    cond = false;
+                                }
+                            }
+                            if (cond)
+                            {
+                                break;
+                            }
+
+                        }
+
+                        AssignmentCategories newAC = new AssignmentCategories();
+                        newAC.AcId = Int32.Parse(s);
+                        newAC.ClsId = clsIDtmp[0];
+                        newAC.Name = category;
+                        newAC.Weight = (uint)catweight;
+                        db.AssignmentCategories.Add(newAC);
+                        db.SaveChanges();
+                        return Json(new { success = true });
+                    }
+                }
+                catch (Exception)
                 {
                     return Json(new { success = false });
-                }
-                else
-                {
-                    var query = from a in db.AssignmentCategories
-                                select a.AcId;
-
-                    bool cond = true;
-                    string s = string.Empty;
-                    while (true)
-                    {
-                        var random = new Random();
-                        s = "";
-                        for (int i = 0; i < 3; i++)
-                            s = String.Concat(s, random.Next(10).ToString());
-
-                        foreach (int U in query)
-                        {
-                            if (U.ToString().Equals(s))
-                            {
-                                cond = false;
-                            }
-                        }
-                        if (cond)
-                        {
-                            break;
-                        }
-
-                    }
-
-                    AssignmentCategories newAC = new AssignmentCategories();
-                    newAC.AcId = Int32.Parse(s);
-                    newAC.ClsId = clsIDtmp[0];
-                    newAC.Name = category;
-                    newAC.Weight = (uint)catweight;
-                    db.AssignmentCategories.Add(newAC);
-                    db.SaveChanges();
-                    return Json(new { success = true });
                 }
             }
 
@@ -301,77 +309,83 @@ namespace LMS.Controllers
     {
             using (Team6LMSContext db = new Team6LMSContext())
             {
-
-                var query0 = from b in db.Courses
-                             where b.Subject.Equals(subject) && b.Num.Equals(num)
-                             join i in db.Classes on b.CId equals i.CId into inv
-                             from j1 in inv.DefaultIfEmpty()
-                             where j1.Year == year && j1.Season.Equals(season)
-                             join i2 in db.AssignmentCategories on j1.ClsId equals i2.ClsId into inv2
-                             from j2 in inv2.DefaultIfEmpty()
-                             where j2.Name.Equals(category)
-                             join i3 in db.Assignments on j2.AcId equals i3.AcId into inv3
-                             from j3 in inv3.DefaultIfEmpty()
-                             where j3.Name.Equals(asgname)
-                             select j3;
-
-
-                var query2 = from b in db.Courses
-                             where b.Subject.Equals(subject) && b.Num.Equals(num)
-                             join i in db.Classes on b.CId equals i.CId into inv
-                             from j1 in inv.DefaultIfEmpty()
-                             where j1.Year == year && j1.Season.Equals(season)
-                             join i2 in db.AssignmentCategories on j1.ClsId equals i2.ClsId into inv2
-                             from j2 in inv2.DefaultIfEmpty()
-                             where j2.Name.Equals(category)
-                             select j2.AcId;
+                try
+                {
+                    var query0 = from b in db.Courses
+                                 where b.Subject.Equals(subject) && b.Num.Equals(num)
+                                 join i in db.Classes on b.CId equals i.CId into inv
+                                 from j1 in inv.DefaultIfEmpty()
+                                 where j1.Year == year && j1.Season.Equals(season)
+                                 join i2 in db.AssignmentCategories on j1.ClsId equals i2.ClsId into inv2
+                                 from j2 in inv2.DefaultIfEmpty()
+                                 where j2.Name.Equals(category)
+                                 join i3 in db.Assignments on j2.AcId equals i3.AcId into inv3
+                                 from j3 in inv3.DefaultIfEmpty()
+                                 where j3.Name.Equals(asgname)
+                                 select j3;
 
 
-                int[] acIDtmp = query2.ToArray();
+                    var query2 = from b in db.Courses
+                                 where b.Subject.Equals(subject) && b.Num.Equals(num)
+                                 join i in db.Classes on b.CId equals i.CId into inv
+                                 from j1 in inv.DefaultIfEmpty()
+                                 where j1.Year == year && j1.Season.Equals(season)
+                                 join i2 in db.AssignmentCategories on j1.ClsId equals i2.ClsId into inv2
+                                 from j2 in inv2.DefaultIfEmpty()
+                                 where j2.Name.Equals(category)
+                                 select j2.AcId;
 
-                if (query0.Any())
+
+                    int[] acIDtmp = query2.ToArray();
+
+                    if (query0.Any())
+                    {
+                        return Json(new { success = false });
+                    }
+                    else
+                    {
+                        var query = from a in db.Assignments
+                                    select a.AId;
+
+                        bool cond = true;
+                        string s = string.Empty;
+                        while (true)
+                        {
+                            var random = new Random();
+                            s = "";
+                            for (int i = 0; i < 3; i++)
+                                s = String.Concat(s, random.Next(10).ToString());
+
+                            foreach (int U in query)
+                            {
+                                if (U.ToString().Equals(s))
+                                {
+                                    cond = false;
+                                }
+                            }
+                            if (cond)
+                            {
+                                break;
+                            }
+
+                        }
+
+                        Assignments newA = new Assignments();
+                        newA.AId = Int32.Parse(s);
+                        newA.AcId = acIDtmp[0];
+                        newA.Name = asgname;
+                        newA.Contents = asgcontents;
+                        newA.Due = asgdue;
+                        newA.Points = asgpoints;
+
+                        db.Assignments.Add(newA);
+                        db.SaveChanges();
+                        return Json(new { success = true });
+                    }
+                }
+                catch (Exception)
                 {
                     return Json(new { success = false });
-                }
-                else
-                {
-                    var query = from a in db.Assignments
-                                select a.AId;
-
-                    bool cond = true;
-                    string s = string.Empty;
-                    while (true)
-                    {
-                        var random = new Random();
-                        s = "";
-                        for (int i = 0; i < 3; i++)
-                            s = String.Concat(s, random.Next(10).ToString());
-
-                        foreach (int U in query)
-                        {
-                            if (U.ToString().Equals(s))
-                            {
-                                cond = false;
-                            }
-                        }
-                        if (cond)
-                        {
-                            break;
-                        }
-
-                    }
-
-                    Assignments newA = new Assignments();
-                    newA.AId = Int32.Parse(s);
-                    newA.AcId = acIDtmp[0];
-                    newA.Name = asgname;
-                    newA.Contents = asgcontents;
-                    newA.Due = asgdue;
-                    newA.Points = asgpoints;
-
-                    db.Assignments.Add(newA);
-                    db.SaveChanges();
-                    return Json(new { success = true });
                 }
             }
         }

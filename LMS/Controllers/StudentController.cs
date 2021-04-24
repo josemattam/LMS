@@ -84,8 +84,6 @@ namespace LMS.Controllers
                                 season = cl.Season,
                                 year = cl.Year,
                                 grade = e.Grade == null ? "--" : e.Grade
-                                //Serial = j1 == null ? null : (uint?)j1.Serial,
-                                //Name = j3 == null ? "" : j3.Name
                             };
                 JsonResult jr = Json(query.ToArray());
 
@@ -112,7 +110,7 @@ namespace LMS.Controllers
         public IActionResult GetAssignmentsInClass(string subject, int num, string season, int year, string uid)
         {
             using (Team6LMSContext db = new Team6LMSContext())
-            {
+            {                
                 var query = from t in db.Students
                             where t.UId.Equals(uid)
                             join i in db.Enrolled on t.UId equals i.UId into inv2
@@ -136,11 +134,12 @@ namespace LMS.Controllers
                             where j4.Year == year && j4.Season.Equals(season)
                             select new
                             {
-                                aname = j3.Name,
+                                aname = j3.Name == null ? "N/A" : j3.Name,
                                 cname = j2.Name,
-                                due = j3.Due.ToString(),
+                                due = j3.Due == null? "N/A" : j3.Due.ToString(),
                                 score = j5 == null ? null : (float?)j5.Score
                             };
+                            
                 return Json(query.ToArray());
             }
         }
@@ -171,37 +170,42 @@ namespace LMS.Controllers
 
             using (Team6LMSContext db = new Team6LMSContext())
             {
-                var query2 = from a in db.Assignments where a.Name.Equals(asgname) select a.AId;
-                int[] AIDtmp = query2.ToArray();
-
-                var query1 = from b in db.Submissions where b.AId.Equals(AIDtmp[0]) 
-                             && b.UId.Equals(uid)  select b;
-
-                if (query1.Any()) //resubmission
+                try
                 {
-                    foreach (Submissions S in query1)
+                    var query2 = from a in db.Assignments where a.Name.Equals(asgname) select a.AId;
+                    int[] AIDtmp = query2.ToArray();
+
+                    var query1 = from b in db.Submissions
+                                 where b.AId.Equals(AIDtmp[0]) && b.UId.Equals(uid)
+                                 select b;
+
+                    if (query1.Any()) //resubmission
                     {
-                        S.Contents = contents;
-                        S.Time = DateTime.Now;
+                        foreach (Submissions S in query1)
+                        {
+                            S.Contents = contents;
+                            S.Time = DateTime.Now;
+                        }
                     }
+                    else //new submission
+                    {
+                        Submissions newSub = new Submissions();
+                        newSub.Contents = contents;
+                        newSub.Score = 0;
+                        newSub.UId = uid;
+                        newSub.AId = AIDtmp[0];
+                        newSub.Time = DateTime.Now;
+                        db.Submissions.Add(newSub);
+                    }
+
+                    db.SaveChanges();
+                    return Json(new { success = true });
                 }
-                else //new submission
+                catch (Exception)
                 {
-                    Submissions newSub = new Submissions();
-                    newSub.Contents = contents;
-                    newSub.Score = 0;
-                    newSub.UId = uid;
-                    newSub.AId = AIDtmp[0];
-                    newSub.Time = DateTime.Now;
-                    db.Submissions.Add(newSub);
+                    return Json(new { success = false });
                 }
-                // Fixed - resubmitting an assignment: if the aid is the same, only change the contents
-                
-                db.SaveChanges();
-                return Json(new { success = true });
             }
-
-
         }
 
 
@@ -220,34 +224,41 @@ namespace LMS.Controllers
 
             using (Team6LMSContext db = new Team6LMSContext())
             {
-                var query2 = from a in db.Courses
-                             where a.Subject.Equals(subject) && a.Num == num
-                             join i in db.Classes on a.CId equals i.CId into inv2
-                             from j1 in inv2.DefaultIfEmpty()
-                             where j1.Year == year && j1.Season.Equals(season)
-                             select j1.ClsId;
+                try
+                {
+                    var query2 = from a in db.Courses
+                                 where a.Subject.Equals(subject) && a.Num == num
+                                 join i in db.Classes on a.CId equals i.CId into inv2
+                                 from j1 in inv2.DefaultIfEmpty()
+                                 where j1.Year == year && j1.Season.Equals(season)
+                                 select j1.ClsId;
 
-                int[] clsIDtmp = query2.ToArray();
+                    int[] clsIDtmp = query2.ToArray();
 
-                var query1 = from a in db.Enrolled
-                             where a.UId.Equals(uid) && a.ClsId == clsIDtmp[0]
-                             select a.UId;
+                    var query1 = from a in db.Enrolled
+                                 where a.UId.Equals(uid) && a.ClsId == clsIDtmp[0]
+                                 select a.UId;
 
-                if (query1.ToString().Equals(uid))
+                    if (query1.ToString().Equals(uid))
+                    {
+                        return Json(new { success = false });
+                    }
+                    else
+                    {
+                        Enrolled newEnrl = new Enrolled();
+                        newEnrl.UId = uid;
+                        newEnrl.ClsId = clsIDtmp[0];
+                        newEnrl.Grade = "";
+                        // need to add a cls, u?
+
+                        db.Enrolled.Add(newEnrl);
+                        db.SaveChanges();
+                        return Json(new { success = true });
+                    }
+                }
+                catch (Exception)
                 {
                     return Json(new { success = false });
-                }
-                else
-                {
-                    Enrolled newEnrl = new Enrolled();
-                    newEnrl.UId = uid;
-                    newEnrl.ClsId = clsIDtmp[0];
-                    newEnrl.Grade = "";
-                    // need to add a cls, u?
-
-                    db.Enrolled.Add(newEnrl);
-                    db.SaveChanges();
-                    return Json(new { success = true });
                 }
             }
         }

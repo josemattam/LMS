@@ -100,49 +100,56 @@ namespace LMS.Controllers
         {
             using (Team6LMSContext db = new Team6LMSContext())
             {
-                var query2 = from a in db.Courses
-                             where a.Subject.Equals(subject) && a.Num == number
-                             select a.CId;
-                if (query2.Any())
+                try
+                {
+                    var query2 = from a in db.Courses
+                                 where a.Subject.Equals(subject) && a.Num == number
+                                 select a.CId;
+                    if (query2.Any())
+                    {
+                        return Json(new { success = false });
+                    }
+                    else
+                    {
+                        var query = from a in db.Courses
+                                    select a.CId;
+
+                        bool cond = true;
+                        string s = string.Empty;
+                        while (true)
+                        {
+                            var random = new Random();
+                            s = "";
+                            for (int i = 0; i < 3; i++)
+                                s = String.Concat(s, random.Next(10).ToString());
+
+                            foreach (int U in query)
+                            {
+                                if (U.ToString().Equals(s))
+                                {
+                                    cond = false;
+                                }
+                            }
+                            if (cond)
+                            {
+                                break;
+                            }
+
+                        }
+
+                        Courses newCourse = new Courses();
+                        newCourse.Name = name;
+                        newCourse.Num = number;
+                        newCourse.Subject = subject;
+                        newCourse.CId = Int32.Parse(s);
+                        db.Courses.Add(newCourse);
+                        db.SaveChanges();
+                        return Json(new { success = true });
+                    }
+                }
+                catch (Exception)
                 {
                     return Json(new { success = false });
-                }
-                else
-                {
-                    var query = from a in db.Courses
-                                select a.CId;
-
-                    bool cond = true;
-                    string s = string.Empty;
-                    while (true)
-                    {
-                        var random = new Random();
-                        s = "";
-                        for (int i = 0; i < 3; i++)
-                            s = String.Concat(s, random.Next(10).ToString());
-
-                        foreach (int U in query)
-                        {
-                            if (U.ToString().Equals(s))
-                            {
-                                cond = false;
-                            }
-                        }
-                        if (cond)
-                        {
-                            break;
-                        }
-
-                    }
-
-                    Courses newCourse = new Courses();
-                    newCourse.Name = name;
-                    newCourse.Num = number;
-                    newCourse.Subject = subject;
-                    newCourse.CId = Int32.Parse(s);
-                    db.Courses.Add(newCourse);
-                    db.SaveChanges();
-                    return Json(new { success = true });
                 }
             }
         }
@@ -169,66 +176,70 @@ namespace LMS.Controllers
 
             using (Team6LMSContext db = new Team6LMSContext())
             {
-                var query2 = from a in db.Courses
-                             where a.Subject.Equals(subject) && a.Num == number
-                             select a.CId;
-                int[] cIDtmp = query2.ToArray();
+                try
+                {
+                    var query2 = from a in db.Courses
+                                 where a.Subject.Equals(subject) && a.Num == number
+                                 select a.CId;
+                    int[] cIDtmp = query2.ToArray();
 
 
-                var query3 = from a in db.Classes
-                             where a.Loc.Equals(location) &&
-                             ((DateTime.Compare(DateTime.Parse(a.Start.ToString()), start) >= 0 && DateTime.Compare(DateTime.Parse(a.Start.ToString()), end) <= 0) ||
-                             (DateTime.Compare(DateTime.Parse(a.Start.ToString()), start) <= 0 && DateTime.Compare(DateTime.Parse(a.Start.ToString()), end) >= 0) ||
-                             (DateTime.Compare(DateTime.Parse(a.Start.ToString()), start) <= 0 && DateTime.Compare(DateTime.Parse(a.End.ToString()), end) >= 0)
-                             )
-                             select a.CId;
+                    var query3 = from a in db.Classes
+                                 where a.Loc.Equals(location) &&
+                                 ((DateTime.Compare(DateTime.Parse(a.Start.ToString()), start) >= 0 && DateTime.Compare(DateTime.Parse(a.Start.ToString()), end) <= 0) ||
+                                 (DateTime.Compare(DateTime.Parse(a.Start.ToString()), start) <= 0 && DateTime.Compare(DateTime.Parse(a.Start.ToString()), end) >= 0) ||
+                                 (DateTime.Compare(DateTime.Parse(a.Start.ToString()), start) <= 0 && DateTime.Compare(DateTime.Parse(a.End.ToString()), end) >= 0))
+                                 select a.CId;
 
+                    if (query3.Any())
+                    {
+                        return Json(new { success = false });
+                    }
+                    else
+                    {
+                        var query = from a in db.Classes
+                                    select a.ClsId;
 
+                        bool cond = true;
+                        string s = string.Empty;
+                        while (true)
+                        {
+                            var random = new Random();
+                            s = "";
+                            for (int i = 0; i < 3; i++)
+                                s = String.Concat(s, random.Next(10).ToString());
 
-                if (query3.Any())
+                            foreach (int U in query)
+                            {
+                                if (U.ToString().Equals(s))
+                                {
+                                    cond = false;
+                                }
+                            }
+                            if (cond)
+                            {
+                                break;
+                            }
+
+                        }
+
+                        Classes newCls = new Classes();
+                        newCls.Year = (uint?)year;
+                        newCls.CId = cIDtmp[0];
+                        newCls.PId = instructor;
+                        newCls.ClsId = Int32.Parse(s);
+                        newCls.Loc = location;
+                        newCls.Start = new TimeSpan(start.Hour, start.Minute, start.Second);
+                        newCls.End = new TimeSpan(end.Hour, end.Minute, end.Second);
+                        newCls.Season = season;
+                        db.Classes.Add(newCls);
+                        db.SaveChanges();
+                        return Json(new { success = true });
+                    }
+                }
+                catch (Exception)
                 {
                     return Json(new { success = false });
-                }
-                else
-                {
-                    var query = from a in db.Classes
-                                select a.ClsId;
-
-                    bool cond = true;
-                    string s = string.Empty;
-                    while (true)
-                    {
-                        var random = new Random();
-                        s = "";
-                        for (int i = 0; i < 3; i++)
-                            s = String.Concat(s, random.Next(10).ToString());
-
-                        foreach (int U in query)
-                        {
-                            if (U.ToString().Equals(s))
-                            {
-                                cond = false;
-                            }
-                        }
-                        if (cond)
-                        {
-                            break;
-                        }
-
-                    }
-
-                    Classes newCls = new Classes();
-                    newCls.Year = (uint?)year;
-                    newCls.CId = cIDtmp[0];
-                    newCls.PId = instructor;
-                    newCls.ClsId = Int32.Parse(s);
-                    newCls.Loc = location;
-                    newCls.Start = new TimeSpan(start.Hour, start.Minute, start.Second);
-                    newCls.End = new TimeSpan(end.Hour, end.Minute, end.Second);
-                    newCls.Season = season;
-                    db.Classes.Add(newCls);
-                    db.SaveChanges();
-                    return Json(new { success = true });
                 }
             }
 
