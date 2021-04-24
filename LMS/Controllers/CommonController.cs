@@ -224,75 +224,88 @@ namespace LMS.Controllers
     }
 
 
-    /// <summary>
-    /// Gets information about a user as a single JSON object.
-    /// The object should have the following fields:
-    /// "fname": the user's first name
-    /// "lname": the user's last name
-    /// "uid": the user's uid
-    /// "department": (professors and students only) the name (such as "Computer Science") of the department for the user. 
-    ///               If the user is a Professor, this is the department they work in.
-    ///               If the user is a Student, this is the department they major in.    
-    ///               If the user is an Administrator, this field is not present in the returned JSON
-    /// </summary>
-    /// <param name="uid">The ID of the user</param>
-    /// <returns>
-    /// The user JSON object 
-    /// or an object containing {success: false} if the user doesn't exist
-    /// </returns>
-    public IActionResult GetUser(string uid)
-    {
+        /// <summary>
+        /// Gets information about a user as a single JSON object.
+        /// The object should have the following fields:
+        /// "fname": the user's first name
+        /// "lname": the user's last name
+        /// "uid": the user's uid
+        /// "department": (professors and students only) the name (such as "Computer Science") of the department for the user. 
+        ///               If the user is a Professor, this is the department they work in.
+        ///               If the user is a Student, this is the department they major in.    
+        ///               If the user is an Administrator, this field is not present in the returned JSON
+        /// </summary>
+        /// <param name="uid">The ID of the user</param>
+        /// <returns>
+        /// The user JSON object 
+        /// or an object containing {success: false} if the user doesn't exist
+        /// </returns>
+        public IActionResult GetUser(string uid)
+        {
             using (Team6LMSContext db = new Team6LMSContext())
             {
-                var query = from u in db.Users
-                            where u.UId == uid
-                            join p in db.Professors on u.UId equals p.UId into pujoin
-                            from pu in pujoin.DefaultIfEmpty()
-                            join s in db.Students on u.UId equals s.UId into spujoin
-                            from spu in spujoin.DefaultIfEmpty()
-                            join a in db.Administrators on u.UId equals a.UId into aspujoin
-                            from aspu in aspujoin.DefaultIfEmpty()
-                            select new
-                            {
-                                fname = u.FName,
-                                lname = u.LName,
-                                uid = u.UId,
-                                // str to be replaced if admin, corresponding subject if student or professor
-                                department = (aspu == null) ? "nullVal"  :  ((spu != null) ? 
-                                                                            (from s in db.Students
-                                                                             where s.UId == uid
-                                                                             select s.Subject).ToString() :
-                                                                                                pu.Subject)
-                            };
+                var query1 = from u in db.Users
+                             join p in db.Professors on u.UId equals p.UId
+                             where u.UId == uid
+                             select u.UId;
 
-                //special case if query fails
-                if (query == null || Json(query) == null)
-                    return Json(new { success = false });
+                // If professor
+                if (query1.ToArray().Count() != 0)
+                {
+                    var query2 = from u in db.Users
+                                 join p in db.Professors on u.UId equals p.UId
+                                 where u.UId == uid
+                                 select new
+                                 {
+                                     fname = u.FName,
+                                     lname = u.LName,
+                                     uid = u.UId,
+                                     department = p.Subject
+                                 };
+                    return Json(query2.ToArray()[0]);
+                }
+                var query3 = from u in db.Users
+                             join s in db.Students on u.UId equals s.UId
+                             where u.UId == uid
+                             select u.UId;
 
-                //return ReplaceNull(Json(query.ToArray()[0]));
-                return ReplaceNull(Json(query.ToArray()[0]));
+                // If Student
+                if (query3.ToArray().Count() != 0)
+                {
+                    var query4 = from u in db.Users
+                                 join s in db.Students on u.UId equals s.UId
+                                 where u.UId == uid
+                                 select new
+                                 {
+                                     fname = u.FName,
+                                     lname = u.LName,
+                                     uid = u.UId,
+                                     department = s.Subject
+                                 };
+                    return Json(query4.ToArray()[0]);
+                }
+                var query5 = from u in db.Users
+                             join a in db.Administrators on u.UId equals a.UId
+                             where u.UId == uid
+                             select u.UId;
+
+                // If admin
+                if (query5.ToArray().Count() != 0)
+                {
+                    var query6 = from u in db.Users
+                                 join a in db.Administrators on u.UId equals a.UId
+                                 where u.UId == uid
+                                 select new
+                                 {
+                                     fname = u.FName,
+                                     lname = u.LName,
+                                     uid = u.UId
+                                 };
+                    return Json(query6.ToArray()[0]);
+                }
+                return Json(new { success = false });
             }
-    }
-
-    /// <summary>
-    /// Helper function to GetUser. If the user is an administrator, it removes the 
-    /// json field of department from the returned JsonResult.
-    /// </summary>
-    /// <param name="jr"> the JsonResult that needs checking </param>
-    /// <returns> In format JsonResult </returns>
-    private IActionResult ReplaceNull(JsonResult jr)
-    {
-            //converts json to string
-            string jstr = JsonConvert.SerializeObject(jr.Value);
-            JObject jo = JObject.Parse(jstr);
-
-            if (jstr.Contains("nullVal"))
-            {
-                jo.Property("department").Remove();
-                return Json(jo);
-            }
-            return Json(jo);
-    }
+        }
 
 
     /*******End code to modify********/
