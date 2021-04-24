@@ -249,7 +249,6 @@ namespace LMS.Controllers
                         newEnrl.UId = uid;
                         newEnrl.ClsId = clsIDtmp[0];
                         newEnrl.Grade = "";
-                        // need to add a cls, u?
 
                         db.Enrolled.Add(newEnrl);
                         db.SaveChanges();
@@ -287,58 +286,34 @@ namespace LMS.Controllers
                 foreach (Enrolled E in query2)
                 {
                     if (E.Grade.Equals("A") || E.Grade.Equals("A+"))
-                    {
                         GPAtmp += 4;
-                    }
                     else if (E.Grade.Equals("A-"))
-                    {
                         GPAtmp += 3.7;
-                    }
                     else if (E.Grade.Equals("B+"))
-                    {
                         GPAtmp += 3.3;
-                    }
                     else if (E.Grade.Equals("B"))
-                    {
                         GPAtmp += 3.0;
-                    }
                     else if (E.Grade.Equals("B-"))
-                    {
                         GPAtmp += 2.7;
-                    }
                     else if (E.Grade.Equals("C+"))
-                    {
                         GPAtmp += 2.3;
-                    }
                     else if (E.Grade.Equals("C"))
-                    {
                         GPAtmp += 2.0;
-                    }
                     else if (E.Grade.Equals("C-"))
-                    {
                         GPAtmp += 1.7;
-                    }
                     else if (E.Grade.Equals("D+"))
-                    {
                         GPAtmp += 1.3;
-                    }
                     else if (E.Grade.Equals("D"))
-                    {
                         GPAtmp += 1.0;
-                    }
                     else if (E.Grade.Equals("D-"))
-                    {
                         GPAtmp += 0.7;
-                    }
                     else if (E.Grade.Equals("E"))
-                    {
                         GPAtmp += 0.0;
-                    }
+
                     k += 1;
                 };
 
                 double GPA = GPAtmp / k;
-
                 return Json(new { gpa = GPA });
             }
         }
