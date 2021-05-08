@@ -12153,23 +12153,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\mhrsh\\.nuget\\packages\\": {},
+    "C:\\Users\\Jose\\.nuget\\packages\\": {},
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\mhrsh\\Desktop\\cs3\\LMS\\LMS\\LMS.csproj",
+      "projectUniqueName": "C:\\Users\\Jose\\Documents\\GitHub\\LMS\\LMS\\LMS.csproj",
       "projectName": "LMS",
-      "projectPath": "C:\\Users\\mhrsh\\Desktop\\cs3\\LMS\\LMS\\LMS.csproj",
-      "packagesPath": "C:\\Users\\mhrsh\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\mhrsh\\Desktop\\cs3\\LMS\\LMS\\obj\\",
+      "projectPath": "C:\\Users\\Jose\\Documents\\GitHub\\LMS\\LMS\\LMS.csproj",
+      "packagesPath": "C:\\Users\\Jose\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Jose\\Documents\\GitHub\\LMS\\LMS\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "C:\\Users\\mhrsh\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Jose\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -12181,7 +12181,6 @@
       },
       "frameworks": {
         "netcoreapp2.2": {
-          "targetAlias": "netcoreapp2.2",
           "projectReferences": {}
         }
       },
@@ -12193,7 +12192,6 @@
     },
     "frameworks": {
       "netcoreapp2.2": {
-        "targetAlias": "netcoreapp2.2",
         "dependencies": {
           "Microsoft.AspNetCore.App": {
             "suppressParent": "All",
@@ -12227,7 +12225,7 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.200\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.100\\RuntimeIdentifierGraph.json"
       }
     }
   }
